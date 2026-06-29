@@ -24,7 +24,7 @@ export default function BackgroundVideo() {
           trigger: document.documentElement,
           start: "top top",
           end: "bottom bottom",
-          scrub: 1, // Smooth scrub
+          scrub: 2.5, // Increased smoothing for ultra-fluid video scrubbing
         },
       });
 
