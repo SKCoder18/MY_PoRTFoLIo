@@ -16,8 +16,13 @@ export default function BackgroundVideo() {
     let tl: gsap.core.Timeline;
 
     const setupScrollTrigger = () => {
-      // Ensure we have a valid duration before setting up the animation
-      const duration = video.duration || 10; 
+      // Get all sections on the page
+      const sections = gsap.utils.toArray("section") as HTMLElement[];
+      const totalSections = Math.max(1, sections.length);
+      
+      // Stop 2 seconds early to hide the grid frame at the end
+      const usableDuration = Math.max(0, (video.duration || 10) - 2); 
+      const timeChunk = usableDuration / totalSections;
 
       tl = gsap.timeline({
         scrollTrigger: {
@@ -28,9 +33,15 @@ export default function BackgroundVideo() {
         },
       });
 
-      tl.to(video, {
-        currentTime: Math.max(0, duration - 2), // Stop 2 seconds early to hide the grid frame at the end
-        ease: "none",
+      // Map each section's height to the timeline duration.
+      // This guarantees that as you scroll through a specific section,
+      // you will scrub through exactly one timeChunk of the video.
+      sections.forEach((sec, i) => {
+        tl.to(video, {
+          currentTime: (i + 1) * timeChunk,
+          duration: sec.offsetHeight || 1000, 
+          ease: "none",
+        });
       });
     };
 
